@@ -1,0 +1,24 @@
+import org.apache.spark.{SparkConf, SparkContext}
+//Created by Navya Gonuguntla
+object WordCountSpark
+{
+  def main(args: Array[String]) {
+    System.setProperty("hadoop.home.dir","c:\\winutils");
+    val sparkConf = new SparkConf().setAppName("SparkWordCount").setMaster("local[*]")
+    val sc=new SparkContext(sparkConf)
+    val inputf=sc.wholeTextFiles("C:\\Users\\Navya Gonuguntla\\Desktop\\PB\\Extracted_Output_File.txt",minPartitions=2)
+    inputf.map(abs=>{
+      abs._1
+      abs._2
+    })
+    val wc=inputf.flatMap(abs=>{abs._2.split(" ")}).map(word=>(word,1))
+    val output=wc.reduceByKey(_+_)
+    output.saveAsTextFile("wordcountspark")
+    val o=output.collect()
+    var s:String="Words:Count \n"
+    o.foreach{case(word,count)=>{
+      s+=word+" : "+count+"\n"
+    }
+    }
+  }
+}
